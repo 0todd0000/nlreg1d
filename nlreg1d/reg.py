@@ -270,5 +270,5 @@ def elastic(y, q=None, penalty=0):
     fdr     = er.fit_transform(fd)
     yr      = fdr.data_matrix[:,:,0]
     wr      = er.warping_.data_matrix[:,:,0]
-    # wr      = Q * (er.warping_.data_matrix[:,:,0].T - q)
+    wr      = Q * (wr - q)
     return yr,wr
