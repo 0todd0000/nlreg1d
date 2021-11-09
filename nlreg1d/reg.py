@@ -6,7 +6,7 @@ from numpy.linalg import norm
 from scipy.linalg import svd
 from scipy.integrate import trapz, cumtrapz
 import fdasrsf.utility_functions as uf
-
+import skfda
 
 
 
@@ -256,3 +256,19 @@ def fpca(y, ncomp=5, smooth=False, niter=5):
     results   = _align_fPCA(y.T, q, num_comp=ncomp, smoothdata=smooth, MaxItr=niter)
     w         = Q * (results.gam.T - q)
     return results.fn.T, w
+
+
+
+
+
+def elastic(y, q=None, penalty=0):
+    Q       = y.shape[1]
+    if q is None:
+        q   = np.linspace(0, 1, Q)
+    fd      = skfda.FDataGrid( data_matrix=y, grid_points=q)
+    er      = skfda.preprocessing.registration.ElasticRegistration(penalty=penalty)
+    fdr     = er.fit_transform(fd)
+    yr      = fdr.data_matrix[:,:,0]
+    wr      = er.warping_.data_matrix[:,:,0]
+    # wr      = Q * (er.warping_.data_matrix[:,:,0].T - q)
+    return yr,wr

@@ -99,6 +99,7 @@ class Warp1DList(list):
 		return self.w - self.q0
 	@property
 	def dispf(self):
+		# return np.array([w.dispf   for w in self])
 		return np.array([w.df   for w in self])
 	@property
 	def inv(self):
