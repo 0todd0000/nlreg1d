@@ -77,16 +77,17 @@ def plot_multipanel(y, yr, wr, n0, colors, ylim=None, alpha_loc=None, paired=Fal
 	twi.plot( ax=ax6 )
 	
 	# add threshold labels:
-	s0,s1     = r'$\alpha$ < 0.05', r'$\alpha$ > 0.05'
-	tx0  = ax3.text( *alpha_loc[0][0] , s0)
-	tx1  = ax3.text( *alpha_loc[0][1] , s1)
-	tx2  = ax4.text( *alpha_loc[1][0] , s0)
-	tx3  = ax4.text( *alpha_loc[1][1] , s1)
-	tx4  = ax5.text( *alpha_loc[2][0] , s0)
-	tx5  = ax5.text( *alpha_loc[2][1] , s1)
-	tx6  = ax6.text( *alpha_loc[3][0] , s0)
-	tx7  = ax6.text( *alpha_loc[3][1] , s1)
-	plt.setp( [tx0,tx1,tx2,tx3,tx4,tx5,tx6,tx7], size=11, name=fontname)
+	if alpha_loc is not None:
+		s0,s1     = r'$\alpha$ < 0.05', r'$\alpha$ > 0.05'
+		tx0  = ax3.text( *alpha_loc[0][0] , s0)
+		tx1  = ax3.text( *alpha_loc[0][1] , s1)
+		tx2  = ax4.text( *alpha_loc[1][0] , s0)
+		tx3  = ax4.text( *alpha_loc[1][1] , s1)
+		tx4  = ax5.text( *alpha_loc[2][0] , s0)
+		tx5  = ax5.text( *alpha_loc[2][1] , s1)
+		tx6  = ax6.text( *alpha_loc[3][0] , s0)
+		tx7  = ax6.text( *alpha_loc[3][1] , s1)
+		plt.setp( [tx0,tx1,tx2,tx3,tx4,tx5,tx6,tx7], size=11, name=fontname)
 	
 	
 	
