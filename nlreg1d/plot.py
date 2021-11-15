@@ -168,4 +168,4 @@ def plot_multipanel(y, yr, wr, n0, colors, ylim=None, alpha_x=None, paired=False
 	
 	
 
-	return AX
+	return fig,AX
