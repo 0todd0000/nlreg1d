@@ -26,9 +26,9 @@ plt.close('all')
 colors    = '0.0', (0.8,0.1,0.1)
 xlabel    = 'Time  (% stance)'
 ylim      = [ (-0.05, 1.3), (-0.05, 1.3), (-25, 39), (-6, 6), (-2, 30), (-6,6), (-6,6) ]
-alpha_loc = [  [(70,3.5), (70,2.6)]  , [(70,17), (70,14.5)]  ,  [(70,3.7), (70,2.8)]   ,    [(70,3.8), (70,2.9)]  ]
+alpha_x   = [70, 70, 70, 70]
 leg_loc   = [(0.80, 0.92), (0.80, 0.92), (0.99, 0.99)]
-AX        = nlreg1d.plot.plot_multipanel(y, yr, wr, J, colors, ylim, alpha_loc, paired=False, dvlabel='Muscle force  (kN)', group_labels=['Control mean', 'PFP mean'], xlabel=xlabel, leg_loc=leg_loc)
+AX        = nlreg1d.plot.plot_multipanel(y, yr, wr, J, colors, ylim, alpha_x, paired=False, dvlabel='Muscle force  (kN)', group_labels=['Control mean', 'PFP mean'], xlabel=xlabel, leg_loc=leg_loc)
 plt.show()
 if save:
 	dirFIGS  = os.path.join( pathlib.Path( __file__ ).parent.parent, 'Figures')

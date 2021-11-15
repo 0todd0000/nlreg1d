@@ -26,8 +26,8 @@ plt.close('all')
 colors    = '0.0', (0.3,0.5,0.99)
 ylimt     = (-7.5, 7.5)
 ylim      = [ (-5, 35), (-5, 35), (-19, 59), ylimt, (-2, 50), ylimt, ylimt ]
-alpha_loc = [  [(70,4.5), (70,3.3)]  , [(70,32), (70,28)]  ,  [(70,4.6), (70,3.4)]   ,    [(70,5.1), (70,4.0)]  ]
-nlreg1d.plot.plot_multipanel(y, yr, wr, J, colors, ylim, alpha_loc, paired=False, dvlabel='Dependent variable value')
+alpha_x   = [70, 70, 70, 70]
+nlreg1d.plot.plot_multipanel(y, yr, wr, J, colors, ylim, alpha_x, paired=False, dvlabel='Dependent variable value')
 plt.show()
 if save:
 	dirFIGS  = os.path.join( pathlib.Path( __file__ ).parent.parent, 'Figures')
