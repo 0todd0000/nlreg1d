@@ -49,7 +49,6 @@ def plot_multipanel(y, yr, wr, n0, colors, ylim=None, alpha_x=None, paired=False
 	
 	# create figure and axes:
 	fig         = plt.figure(  figsize=(14,10)  )
-	plt.get_current_fig_manager().window.move(0, 0)
 	axw,axh     = 0.26, 0.27
 	# axx     = np.linspace( 0.06, 0.42, 0.71)
 	axx         = [0.085, 0.415, 0.730]
