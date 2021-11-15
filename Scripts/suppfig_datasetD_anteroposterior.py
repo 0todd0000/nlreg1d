@@ -29,7 +29,7 @@ ylimt     = (-12, 12)
 ylim      = [ (-1, 30), (-1, 30), (-20, 40), ylimt, (-2, 300), ylimt, ylimt ]
 alpha_x   = [20, 30, 80, 80]
 leg_loc   = [(0.32, 0.90), (0.32, 0.90), (0.99, 0.99)]
-AX        = nlreg1d.plot.plot_multipanel(y, yr, wr, J, colors, ylim, alpha_x, paired=True, dvlabel='Anteriorposterior COP  (cm)', group_labels=['Normal', 'Fast'], xlabel=xlabel, leg_loc=leg_loc)
+fig,AX    = nlreg1d.plot.plot_multipanel(y, yr, wr, J, colors, ylim, alpha_x, paired=True, dvlabel='Anteriorposterior COP  (cm)', group_labels=['Normal', 'Fast'], xlabel=xlabel, leg_loc=leg_loc)
 tx0 = AX[0].text(0.5, 0.8, 'Anterior')
 tx1 = AX[0].text(0.5, 0.1, 'Posterior')
 plt.setp( [tx0,tx1], name='Helvetica', size=10, bbox=dict(facecolor='0.9'), transform=AX[0].transAxes, ha='center')
