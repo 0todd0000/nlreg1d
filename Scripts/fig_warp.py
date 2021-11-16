@@ -80,7 +80,7 @@ leg = ax0.legend(['Null warp', 'Warp 1', 'Warp 2', 'Warp 3'], loc='lower right')
 plt.setp( leg.get_texts(), name=fontname, size=8)
 
 ### panel labels:
-labels = ['Warp functions', 'Displacement fields', 'Reference data', 'Warped data']
+labels = ['Warp functions', 'Warp fields', 'Reference data', 'Warped data']
 [ax.text(0.03, 0.93, '(%s)  %s' %(chr(97+i).upper(), ss), name=fontname, size=12, transform=ax.transAxes)   for i,(ax,ss) in enumerate( zip(AX.ravel(), labels) )   ]
 
 
