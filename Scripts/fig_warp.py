@@ -29,7 +29,6 @@ yw       = [ww.apply(y)  for ww in w]  # warped data
 # plot:
 plt.close('all')
 fig,AX = plt.subplots( 2, 2, figsize=(8,6) )
-plt.get_current_fig_manager().window.move(0, 0)
 ax0,ax1,ax2,ax3 = AX.ravel()
 
 fontname = 'Helvetica'

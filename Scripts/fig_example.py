@@ -45,7 +45,6 @@ yr,wr     = nlreg1d.reg.fpca( yi, ncomp=5, smooth=False, niter=niter )
 # plot:
 plt.close('all')
 fig,AX = plt.subplots( 2, 2, figsize=(8,6) )
-plt.get_current_fig_manager().window.move(0, 0)
 ax0,ax1,ax2,ax3 = AX.ravel()
 
 fontname = 'Helvetica'
