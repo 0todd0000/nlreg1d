@@ -16,12 +16,17 @@ def interp1d(y, n=101):
 	return yi
 
 
-niter   = 1
+dirDATA   = os.path.join( pathlib.Path( __file__ ).parent.parent, 'Data')
+niter     = 5
+save      = True
 
 
-# load data:
-fname   = '/Users/todd/GitHub/mydatasets1d/Dorn2012/processed/imported_no_interpolate.npz'
-with np.load( fname, allow_pickle=True ) as Z:
+
+
+
+# Dorn 2012 dataset
+fnameNPZ  = os.path.join( dirDATA, 'Dorn2021-orig.npz')
+with np.load( fnameNPZ, allow_pickle=True ) as Z:
 	Y     = Z['Y']
 	SPEED = Z['SPEED']
 	FOOT  = Z['FOOT']
@@ -100,7 +105,7 @@ ylabels = ['GRF  (N)'] * 3 + ['Temporal displacement (%)']
 
 ### panel labels:
 labels = ['Original', 'Linearly registered', 'Nonlinearly registered', 'Warp fields']
-[ax.text(0.03, 0.93, '(%s)  %s' %(chr(97+i).upper(), ss), name=fontname, size=12, transform=ax.transAxes)   for i,(ax,ss) in enumerate( zip(AX.ravel(), labels) )   ]
+[ax.text(0.03, 0.93, '(%s)  %s' %(chr(97+i).upper(), ss), name=fontname, size=12, transform=ax.transAxes)   for i,(ax,ss) in enumerate( zip(AX.ravel(), labels) )]
 
 
 plt.tight_layout()
