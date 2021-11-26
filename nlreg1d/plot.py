@@ -106,7 +106,7 @@ def plot_multipanel(y, yr, wr, n0, colors, ylim=None, alpha_x=None, paired=False
 	ax1.set_ylabel(dvlabel, name=fontname, size=sz)
 	ax2.set_ylabel('Warp magnitude (% domain)', name=fontname, size=sz)
 	ax3.set_ylabel('SPM{t}', name=fontname, size=sz)
-	ax4.set_ylabel('SPM{T2}', name=fontname, size=sz)
+	ax4.set_ylabel(r'SPM{ $T^2$ }', name=fontname, size=sz)
 	ax5.set_ylabel('SPM{t}', name=fontname, size=sz)
 	[ax.set_xlabel(xlabel, name=fontname, size=sz)  for ax in [ax3,ax5,ax6]]
 
