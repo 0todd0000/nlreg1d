@@ -12,7 +12,7 @@ import skfda
 
 
 
-def _align_fPCA(f, time, num_comp=3, smoothdata=False, MaxItr=50):
+def _align_fPCA(f, time, num_comp=3, smoothdata=False, MaxItr=50, parallel=False, verbose=True):
     """
     
     This is a customization of the "align_fPCA" function in fdasrsf/time_warping.py
@@ -62,12 +62,12 @@ def _align_fPCA(f, time, num_comp=3, smoothdata=False, MaxItr=50):
     Nstd = coef.shape[0]
     M = f.shape[0]
     N = f.shape[1]
-    if M > 500:
-        parallel = True
-    elif N > 100:
-        parallel = True
-    else:
-        parallel = False
+    # if M > 500:
+    #     parallel = True
+    # elif N > 100:
+    #     parallel = True
+    # else:
+    #     parallel = False
 
     eps = np.finfo(np.double).eps
     f0 = f
@@ -76,7 +76,8 @@ def _align_fPCA(f, time, num_comp=3, smoothdata=False, MaxItr=50):
     f, g, g2 = uf.gradient_spline(time, f, smoothdata)
     q = g / np.sqrt(abs(g) + eps)
 
-    print ("Initializing...")
+    if verbose:
+        print ("Initializing...")
     mnq = q.mean(axis=1)
     a = mnq.repeat(N)
     d1 = a.reshape(M, N)
@@ -84,7 +85,8 @@ def _align_fPCA(f, time, num_comp=3, smoothdata=False, MaxItr=50):
     dqq = np.sqrt(d.sum(axis=0))
     min_ind = dqq.argmin()
 
-    print("Aligning %d functions in SRVF space to %d fPCA components..."
+    if verbose:
+        print("Aligning %d functions in SRVF space to %d fPCA components..."
           % (N, num_comp))
     itr = 0
     mq = np.zeros((M, MaxItr + 1))
@@ -97,8 +99,9 @@ def _align_fPCA(f, time, num_comp=3, smoothdata=False, MaxItr=50):
     cost = np.zeros(MaxItr + 1)
 
     while itr < MaxItr:
-        print("updating step: r=%d" % (itr + 1))
-        if itr == MaxItr:
+        if verbose:
+            print("updating step: r=%d" % (itr + 1))
+        if verbose and (itr == MaxItr):
             print("maximal number of iterations is reached")
 
         # PCA Step
@@ -247,13 +250,13 @@ def _align_fPCA(f, time, num_comp=3, smoothdata=False, MaxItr=50):
     
     
     
-def fpca(y, ncomp=5, smooth=False, niter=5):
+def fpca(y, ncomp=5, smooth=False, niter=5, parallel=False, verbose=True):
     '''
     Wrapper for align_fPCA
     '''
     Q         = y.shape[1]
     q         = np.linspace(0, 1, Q)
-    results   = _align_fPCA(y.T, q, num_comp=ncomp, smoothdata=smooth, MaxItr=niter)
+    results   = _align_fPCA(y.T, q, num_comp=ncomp, smoothdata=smooth, MaxItr=niter, parallel=parallel, verbose=verbose)
     w         = Q * (results.gam.T - q)
     return results.fn.T, w
 
