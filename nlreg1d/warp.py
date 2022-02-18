@@ -15,16 +15,16 @@ class Warp1D(object):
 	@property
 	def Q(self):
 		return self.w.size
-	# @property
-	# def wf(self):
-	# 	'Displacement field (warped coordinates)'
-	# 	return -self.wf
+	@property
+	def dev(self):
+		'Linear time deviations (differences from linear time)'
+		return self.w - self.q0
 
 	@property
 	def dispf(self):
 		'Displacement field (original coordinates)'
 		x,y   = self.qw, -self.wfn
-		f     = interpolate.interp1d( x, y, 'spline', bounds_error=False, fill_value=0)
+		f     = interpolate.interp1d( x, y, 'linear', bounds_error=False, fill_value=0)
 		return f( self.q0 )
 		
 	@property
@@ -80,7 +80,13 @@ class Warp1D(object):
 	def get_inverse(self):
 		return self.inv
 		
-		
+	def get_deviation_from_linear_time(self, rel=True):
+		d = self.dev
+		if not rel:
+			d *= self.Q
+		return d
+	
+	
 	def plot(self, ax=None, **kwargs):
 		ax = self._gca(ax)
 		ax.plot( self.w, **kwargs)
