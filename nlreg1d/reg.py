@@ -5,6 +5,7 @@ import numpy as np
 from numpy.linalg import norm
 from scipy.linalg import svd
 from scipy.integrate import trapz, cumtrapz
+import fdasrsf
 import fdasrsf.utility_functions as uf
 import skfda
 
@@ -259,6 +260,22 @@ def fpca(y, ncomp=5, smooth=False, niter=5, parallel=False, verbose=True):
     results   = _align_fPCA(y.T, q, num_comp=ncomp, smoothdata=smooth, MaxItr=niter, parallel=parallel, verbose=verbose)
     w         = Q * (results.gam.T - q)
     return results.fn.T, w
+
+
+def srsf(y, **kwargs):
+    # method="mean", omethod="DP2", center=True, smoothdata=False, MaxItr=5, parallel=False, lam=0.0, cores=-1, grid_dim=7, parallel=False, verbose=False
+    '''
+    Wrapper for srsf_align
+    '''
+    Q         = y.shape[1]
+    q         = np.linspace(0, 1, Q)
+    fdaw      = fdasrsf.fdawarp(y.T, q)
+    fdaw.srsf_align(**kwargs)
+    yr        = fdaw.fn.T
+    wf        = fdaw.gam.T
+    # w         = Q * (fdaw.gam.T - q)
+    return yr, wf
+
 
 
 

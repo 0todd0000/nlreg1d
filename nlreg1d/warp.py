@@ -15,15 +15,16 @@ class Warp1D(object):
 	@property
 	def Q(self):
 		return self.w.size
-	@property
-	def df(self):
-		'Displacement field (warped coordinates)'
-		return -self.wf
+	# @property
+	# def wf(self):
+	# 	'Displacement field (warped coordinates)'
+	# 	return -self.wf
+
 	@property
 	def dispf(self):
 		'Displacement field (original coordinates)'
-		x,y   = self.qw, -self.wf
-		f     = interpolate.interp1d( x, y, 'linear', bounds_error=False, fill_value=0)
+		x,y   = self.qw, -self.wfn
+		f     = interpolate.interp1d( x, y, 'spline', bounds_error=False, fill_value=0)
 		return f( self.q0 )
 		
 	@property
@@ -36,17 +37,17 @@ class Warp1D(object):
 		'Warped time field'
 		return self.apply( self.q0 )
 	@property
-	def wf(self):
-		'Warp field'
-		return self.w - self.q0
+	def wfn(self):
+		'Warp function'
+		return -(self.w - self.q0)
 	
 	def _gca(self, ax):
 		return plt.gca() if (ax is None) else ax
 	
-	def apply(self, y):
+	def apply(self, y, interp='linear'):
 		# same as:   uf.warp_f_gamma( self.q0, y, self.w )
 		# qw    = self.w
-		f     = interpolate.interp1d( self.q0, y, 'linear', bounds_error=False, fill_value=0)
+		f     = interpolate.interp1d( self.q0, y, interp, bounds_error=False, fill_value=0)
 		return f( self.w )
 		
 		
@@ -60,8 +61,21 @@ class Warp1D(object):
 	def asarray(self, df=False):
 		return self.df if df else self.w
 	
-	def get_displacement_field(self):
-		return self.df
+	def get_displacement_field(self, interp='linear', rel=True):
+		x,y   = self.qw, -self.wfn
+		f     = interpolate.interp1d( x, y, interp, bounds_error=False, fill_value=0)
+		df    = - f( self.q0 )
+		if not rel:
+			df *= self.Q
+			# df = Q * df
+		#
+		#
+		# yi    = f( self.q0 )
+		# df    = - np.array( yi )
+		# if not rel:
+		# 	Q  = x.size
+		# 	df = Q * df
+		return df
 	
 	def get_inverse(self):
 		return self.inv
@@ -95,12 +109,12 @@ class Warp1DList(list):
 	def Q(self):
 		return self.w.shape[1]
 	@property
-	def df(self):
-		return self.w - self.q0
+	def wfn(self):
+		return -(self.w - self.q0)
 	@property
 	def dispf(self):
-		# return np.array([w.dispf   for w in self])
-		return np.array([w.df   for w in self])
+		return np.array([w.dispf   for w in self])
+		# return np.array([w.df   for w in self])
 	@property
 	def inv(self):
 		wi = np.array([ww.inv.w for ww in self])
@@ -118,6 +132,9 @@ class Warp1DList(list):
 	def asarray(self):
 		return self.w.copy()
 
+	def get_displacement_fields(self, interp='linear', rel=True):
+		return np.array( [ ww.get_displacement_field(interp=interp, rel=rel)   for ww in self] )
+	
 	def plot(self, ax=None, **kwargs):
 		ax = self._gca(ax)
 		ax.plot( self.w.T, **kwargs)

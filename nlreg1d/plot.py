@@ -27,8 +27,8 @@ def data2axes(ax, points):
 
 def plot_multipanel(y, yr, wr, n0, colors, ylim=None, alpha_x=None, paired=False, dvlabel='Dependent variable', xlabel='Domain position  (%)', group_labels=None, leg_loc=[(0.99, 0.92), (0.99, 0.92), (0.99, 0.99)]):
 	wlistr   = Warp1DList( wr )
-	# d        = wlistr.df[:,1:-1]
-	d        = wlistr.dispf[:,1:-1]
+	# d        = wlistr.wfn[:,1:-1]
+	d        = wlistr.get_displacement_fields(interp='linear')[:,1:-1]
 	Y        = np.dstack( [yr,wr] )
 	J        = n0
 	fontname = 'Helvetica'

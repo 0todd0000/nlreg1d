@@ -8,7 +8,7 @@ import nlreg1d
 
 dirDATA   = os.path.join( pathlib.Path( __file__ ).parent.parent, 'Data')
 niter     = 5
-save      = True
+save      = False
 
 
 
@@ -20,13 +20,17 @@ J         = (g==0).sum()     # number of observations in first group
 ### register:
 Q         = y.shape[1]
 q         = np.linspace(0, 1, Q)
-yr,wr     = nlreg1d.reg.fpca( y, ncomp=5, smooth=False, niter=niter )
+# yr,wr     = nlreg1d.reg.fpca( y, ncomp=5, smooth=False, niter=niter )
+yr,wr     = nlreg1d.reg.srsf(y, MaxItr=5)
+wlistr    = nlreg1d.warp.Warp1DList( wr )
+d         = wlistr.get_displacement_fields(interp='linear', rel=False)[:,1:-1]
 ### plot:
 plt.close('all')
 colors    = '0.0', (0.8,0.1,0.1)
 xlabel    = 'Time  (% stance)'
 ylimt     = (-7, 7)
-ylim      = [ (-2, 3), (-2, 3), (-35, 48), ylimt, (-2, 60), ylimt, ylimt ]
+# ylim      = [ (-2, 3), (-2, 3), (-35, 48), ylimt, (-2, 60), ylimt, ylimt ]
+ylim      = [ (-2, 3), (-2, 3), (-0.5, 0.5), ylimt, (-2, 60), ylimt, ylimt ]
 alpha_x   = [20, 20, 80, 80]
 fig,AX    = nlreg1d.plot.plot_multipanel(y, yr, wr, J, colors, ylim, alpha_x, paired=True, dvlabel='Mediolateral COP  (cm)', group_labels=['Normal', 'Fast'], xlabel=xlabel)
 tx0 = AX[0].text(0.1, 0.8, 'Lateral')
