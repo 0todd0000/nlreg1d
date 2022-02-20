@@ -31,8 +31,9 @@ class Warp1D(object):
 	@property
 	def inv(self):
 		'Inverse warp'
-		f     = interpolate.interp1d( self.w, self.q0, 'linear', bounds_error=False, fill_value=0)
-		return self.__class__(  f( self.q0 )  )
+		f = interpolate.interp1d( self.w, self.q0, 'linear', bounds_error=False, fill_value=0)
+		w = f( self.q0 )
+		return w
 	@property
 	def qw(self):
 		'Warped time field'
@@ -45,10 +46,8 @@ class Warp1D(object):
 	def _gca(self, ax):
 		return plt.gca() if (ax is None) else ax
 	
-	def apply(self, y, interp='linear'):
-		# same as:   uf.warp_f_gamma( self.q0, y, self.w )
-		# qw    = self.w
-		f     = interpolate.interp1d( self.q0, y, interp, bounds_error=False, fill_value=0)
+	def apply(self, y):
+		f     = interpolate.interp1d( self.q0, y, 'linear', bounds_error=False, fill_value=0)
 		return f( self.w )
 		
 		
@@ -62,9 +61,19 @@ class Warp1D(object):
 	def asarray(self, df=False):
 		return self.df if df else self.w
 	
-	def get_displacement_field(self, interp='linear', rel=True):
+
+	
+	
+	def get_deviation_from_linear_time(self, rel=True):
+		d = self.dev
+		if not rel:
+			d *= self.Q
+		return d
+	
+	
+	def get_displacement_field(self, rel=True):
 		x,y   = self.qw, -self.wfn
-		f     = interpolate.interp1d( x, y, interp, bounds_error=False, fill_value=0)
+		f     = interpolate.interp1d( x, y, 'linear', bounds_error=False, fill_value=0)
 		df    = - f( self.q0 )
 		if not rel:
 			df *= self.Q
@@ -77,17 +86,14 @@ class Warp1D(object):
 		# 	Q  = x.size
 		# 	df = Q * df
 		return df
-	
-	def get_inverse(self):
-		return self.inv
-		
-	def get_deviation_from_linear_time(self, rel=True):
-		d = self.dev
-		if not rel:
-			d *= self.Q
-		return d
-	
-	
+
+	def get_inverse(self, as_warp_object=False):
+		w = self.inv
+		if as_warp_object:
+			w  = Warp1D( w )
+		return w
+
+
 	def plot(self, ax=None, **kwargs):
 		ax = self._gca(ax)
 		ax.plot( self.w, **kwargs)
@@ -139,11 +145,15 @@ class Warp1DList(list):
 	def asarray(self):
 		return self.w.copy()
 
-	def get_displacement_fields(self, interp='linear', rel=True):
-		return np.array( [ ww.get_displacement_field(interp=interp, rel=rel)   for ww in self] )
+	def get_displacement_fields(self, rel=True):
+		return np.array( [ ww.get_displacement_field(rel=rel)   for ww in self] )
 	
 	def get_deviations_from_linear_time(self):
 		return np.array( [ww.dev  for ww in self] )
+	
+	# def get_inverse(self, as_warp_object=False):
+	# 	wi = self.inv
+	# 	if
 	
 	def plot(self, ax=None, **kwargs):
 		ax = self._gca(ax)
@@ -154,28 +164,17 @@ class Warp1DList(list):
 		ax.plot( self.df.T, **kwargs)
 		
 
-# def random(Q, sigma, J=1):
-# 	w = uf.rgam(Q, sigma, J)
-# 	if J==1:
-# 		w = Warp1D( w.flatten() )
-# 	else:
-# 		w = Warp1DList( w.T )
-# 	return w
 
 
-def random(J=8, Q=101, sigma=5, shape_parameter=2, n_random=8, aswarp1d=False):
-	fgrid = skfda.datasets.make_random_warping(n_samples=J, n_features=Q, start=0, stop=1, sigma=sigma, shape_parameter=shape_parameter, n_random=n_random, random_state=None)
-	q     = fgrid.grid_points[0]
-	wf    = fgrid.data_matrix.squeeze()
-	if aswarp1d:
-		wf = Warp1DList( wf )
-	return wf
-	# wlist = nl.warp.
-	#
-	# w = uf.rgam(Q, sigma, J)
-	# if J==1:
-	# 	w = Warp1D( w.flatten() )
-	# else:
-	# 	w = Warp1DList( w.T )
-	# return w
+def random_warp(J=1, Q=101, sigma=5, shape_parameter=2, n_random=5, as_warp_object=False):
+	'''
+	Wrapper for skfda.datasets.make_random_warping
+	'''
+	fgrid  = skfda.datasets.make_random_warping(n_samples=J, n_features=Q, start=0, stop=1, sigma=sigma, shape_parameter=shape_parameter, n_random=n_random, random_state=None)
+	q      = fgrid.grid_points[0]
+	w      = fgrid.data_matrix.squeeze()
+	if as_warp_object:
+		w  = Warp1D( w ) if (J==1) else Warp1DList( w )
+	return w
+
 
