@@ -2,6 +2,7 @@
 import numpy as np
 from scipy import interpolate
 from matplotlib import pyplot as plt
+import skfda
 import fdasrsf
 import fdasrsf.utility_functions as uf
 
@@ -141,6 +142,9 @@ class Warp1DList(list):
 	def get_displacement_fields(self, interp='linear', rel=True):
 		return np.array( [ ww.get_displacement_field(interp=interp, rel=rel)   for ww in self] )
 	
+	def get_deviations_from_linear_time(self):
+		return np.array( [ww.dev  for ww in self] )
+	
 	def plot(self, ax=None, **kwargs):
 		ax = self._gca(ax)
 		ax.plot( self.w.T, **kwargs)
@@ -150,10 +154,28 @@ class Warp1DList(list):
 		ax.plot( self.df.T, **kwargs)
 		
 
-def random(Q, sigma, J=1):
-	w = uf.rgam(Q, sigma, J)
-	if J==1:
-		w = Warp1D( w.flatten() )
-	else:
-		w = Warp1DList( w.T )
-	return w 
+# def random(Q, sigma, J=1):
+# 	w = uf.rgam(Q, sigma, J)
+# 	if J==1:
+# 		w = Warp1D( w.flatten() )
+# 	else:
+# 		w = Warp1DList( w.T )
+# 	return w
+
+
+def random(J=8, Q=101, sigma=5, shape_parameter=2, n_random=8, aswarp1d=False):
+	fgrid = skfda.datasets.make_random_warping(n_samples=J, n_features=Q, start=0, stop=1, sigma=sigma, shape_parameter=shape_parameter, n_random=n_random, random_state=None)
+	q     = fgrid.grid_points[0]
+	wf    = fgrid.data_matrix.squeeze()
+	if aswarp1d:
+		wf = Warp1DList( wf )
+	return wf
+	# wlist = nl.warp.
+	#
+	# w = uf.rgam(Q, sigma, J)
+	# if J==1:
+	# 	w = Warp1D( w.flatten() )
+	# else:
+	# 	w = Warp1DList( w.T )
+	# return w
+
