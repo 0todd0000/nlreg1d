@@ -4,166 +4,127 @@ from scipy import interpolate
 from matplotlib import pyplot as plt
 import skfda
 import fdasrsf
-import fdasrsf.utility_functions as uf
 
 
-
-class Warp1D(object):
-	def __init__(self, w):
-		self.w    = w
-		self.q0   = np.linspace(0, 1, self.Q)
-
+class _WarpBase(object):
+	
 	@property
-	def Q(self):
-		return self.w.size
-	@property
-	def dev(self):
-		'Linear time deviations (differences from linear time)'
+	def dev(self):  # deviations from linear time (warped grid)
 		return self.w - self.q0
 
-	@property
-	def dispf(self):
-		'Displacement field (original coordinates)'
-		x,y   = self.qw, -self.wfn
-		f     = interpolate.interp1d( x, y, 'linear', bounds_error=False, fill_value=0)
-		return f( self.q0 )
-		
-	@property
-	def inv(self):
-		'Inverse warp'
-		f = interpolate.interp1d( self.w, self.q0, 'linear', bounds_error=False, fill_value=0)
-		w = f( self.q0 )
-		return w
-	@property
-	def qw(self):
-		'Warped time field'
-		return self.apply( self.q0 )
-	@property
-	def wfn(self):
-		'Warp function'
-		return -(self.w - self.q0)
-	
 	def _gca(self, ax):
 		return plt.gca() if (ax is None) else ax
 	
-	def apply(self, y):
+	def asarray(self):
+		return self.w.copy()
+
+
+
+	def get_grid_points(self, relative=True):
+		return self.q0 if relative else (self.Q * self.q0)
+
+	def get_deviation_from_linear_time(self, relative=True):  # relative to domain [0,1] if True, otherwise [0,Q]
+		return self.dev if relative else (self.Q * self.dev)
+	
+	def get_displacement_field(self, relative=True):
+		return self.dispf if relative else (self.Q * self.dispf)
+
+	def get_warp_function(self, relative=True):
+		return self.w if relative else (self.Q * self.w)
+
+	def get_inverse(self, as_warp_object=False):
+		return self.__class__(self.inv) if as_warp_object else self.inv
+
+
+
+	def plot(self, ax=None, relative=True, **kwargs):
+		self.plot_warp_function( ax=ax, relative=relative, **kwargs )
+
+	def plot_deviation_from_linear_time(self, ax=None, relative=True, **kwargs):
+		ax = self._gca(ax)
+		x  = self.get_grid_points( relative=relative )
+		y  = self.get_deviation_from_linear_time( relative=relative )
+		ax.plot( x, y.T, **kwargs)
+
+	def plot_displacement_field(self, ax=None, relative=True, **kwargs):
+		ax = self._gca(ax)
+		x  = self.get_grid_points( relative=relative )
+		y  = self.get_displacement_field( relative=relative )
+		ax.plot( x, y.T, **kwargs)
+
+	def plot_warp_function(self, ax=None, relative=True, **kwargs):
+		ax = self._gca(ax)
+		x  = self.get_grid_points( relative=relative )
+		y  = self.get_warp_function( relative=relative )
+		ax.plot( x, y.T, **kwargs)
+
+
+
+
+
+class Warp1D(_WarpBase):
+	def __init__(self, w):
+		self.w    = w                          # warp function
+		self.q0   = np.linspace(0, 1, self.Q)  # grid points
+
+	@property
+	def Q(self):  # number of grid points
+		return self.w.size
+
+	@property
+	def dispf(self):  # displacement field (original grid)
+		x,y   = self.qw, self.dev
+		f     = interpolate.interp1d( x, y, 'linear', bounds_error=False, fill_value=0)
+		return -f( self.q0 )
+		
+	@property
+	def inv(self):  # inverse warp
+		f = interpolate.interp1d( self.w, self.q0, 'linear', bounds_error=False, fill_value=0)
+		w = f( self.q0 )
+		return w
+
+	@property
+	def qw(self):  # warped grid
+		return self.apply( self.q0 )
+
+	def apply(self, y):  # apply warp to a (Q,) array
 		f     = interpolate.interp1d( self.q0, y, 'linear', bounds_error=False, fill_value=0)
 		return f( self.w )
 		
-		
-		
-		# x0    = self.get_original_domain()
-		# xw    = self.get_warped_domain()
-		# f     = interpolate.interp1d(xw, y, 'linear', bounds_error=False, fill_value=0)
-		# return f(x0)
-		
-		
-	def asarray(self, df=False):
-		return self.df if df else self.w
-	
-
-	
-	
-	def get_deviation_from_linear_time(self, rel=True):
-		d = self.dev
-		if not rel:
-			d *= self.Q
-		return d
-	
-	
-	def get_displacement_field(self, rel=True):
-		x,y   = self.qw, -self.wfn
-		f     = interpolate.interp1d( x, y, 'linear', bounds_error=False, fill_value=0)
-		df    = - f( self.q0 )
-		if not rel:
-			df *= self.Q
-			# df = Q * df
-		#
-		#
-		# yi    = f( self.q0 )
-		# df    = - np.array( yi )
-		# if not rel:
-		# 	Q  = x.size
-		# 	df = Q * df
-		return df
-
-	def get_inverse(self, as_warp_object=False):
-		w = self.inv
-		if as_warp_object:
-			w  = Warp1D( w )
-		return w
-
-
-	def plot(self, ax=None, **kwargs):
-		ax = self._gca(ax)
-		ax.plot( self.w, **kwargs)
-
-	def plot_displacement_field(self, ax=None, **kwargs):
-		ax = self._gca(ax)
-		ax.plot( self.df, **kwargs)
-		
-		
-	def verify(self):
-		# (that it is a valid warp;  requiring monotonically increasing values = positive derivatives)
-		pass
 
 
 
-class Warp1DList(list):
+
+
+class Warp1DList(list, _WarpBase):
 	def __init__(self, w):
 		self.w    = w
 		self.q0   = np.linspace(0, 1, self.Q)
 		super().__init__( [Warp1D(ww)  for ww in w] )
 		
 	@property
-	def J(self):
+	def J(self):  # number of observations
 		return self.w.shape[0]
+
 	@property
-	def Q(self):
+	def Q(self):  # number of grid points
 		return self.w.shape[1]
+
 	@property
-	def wfn(self):
-		return -(self.w - self.q0)
-	@property
-	def dispf(self):
+	def dispf(self):  # displacement fields
 		return np.array([w.dispf   for w in self])
-		# return np.array([w.df   for w in self])
+		
 	@property
-	def inv(self):
-		wi = np.array([ww.inv.w for ww in self])
-		return self.__class__(  wi  )
+	def inv(self):  # inverse warps
+		return np.array( [ww.inv for ww in self] )
+
 	@property
 	def shape(self):
 		return self.w.shape
 		
-	def _gca(self, ax):
-		return plt.gca() if (ax is None) else ax
-	
-	def apply(self, y):
+	def apply(self, y):   # apply warps to (J,Q) array of observations
 		return np.array( [ ww.apply(yy)   for ww,yy in zip(self, y)] )
 	
-	def asarray(self):
-		return self.w.copy()
-
-	def get_displacement_fields(self, rel=True):
-		return np.array( [ ww.get_displacement_field(rel=rel)   for ww in self] )
-	
-	def get_deviations_from_linear_time(self):
-		return np.array( [ww.dev  for ww in self] )
-	
-	# def get_inverse(self, as_warp_object=False):
-	# 	wi = self.inv
-	# 	if
-	
-	def plot(self, ax=None, **kwargs):
-		ax = self._gca(ax)
-		ax.plot( self.w.T, **kwargs)
-
-	def plot_displacement_field(self, ax=None, **kwargs):
-		ax = self._gca(ax)
-		ax.plot( self.df.T, **kwargs)
-		
-
 
 
 def random_warp(J=1, Q=101, sigma=5, shape_parameter=2, n_random=5, as_warp_object=False):
