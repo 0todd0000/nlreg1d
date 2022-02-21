@@ -3,6 +3,7 @@
 import os,sys
 # import collections
 import numpy as np
+from scipy import interpolate
 # from numpy.linalg import norm
 # from scipy.linalg import svd
 # from scipy.integrate import trapz, cumtrapz
@@ -120,3 +121,15 @@ def elastic(y, q=None, penalty=0):
 	yr    = fdr.data_matrix[:,:,0]
 	wf    = er.warping_.data_matrix[:,:,0]
 	return yr,wf
+	
+	
+def linear(y, n=101):
+	'''
+	Linearly register (interpolate) a single (Q,) observation to *n* equally spaced points
+	'''
+	Q     = y.size
+	q0    = np.linspace(0, 1, Q )
+	qi    = np.linspace( q0.min(), q0.max(), n )
+	f     = interpolate.interp1d(q0, y)
+	yi    = f(qi)
+	return yi

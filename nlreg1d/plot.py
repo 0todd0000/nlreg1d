@@ -6,7 +6,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import patches
 import spm1d
-from . warp import Warp1DList
+
 
 
 def axes2data(ax, points):
@@ -25,11 +25,9 @@ def data2axes(ax, points):
 
 
 
-def plot_multipanel(y, yr, wr, n0, colors, ylim=None, alpha_x=None, paired=False, dvlabel='Dependent variable', xlabel='Domain position  (%)', group_labels=None, leg_loc=[(0.99, 0.92), (0.99, 0.92), (0.99, 0.99)]):
-	wlistr   = Warp1DList( wr )
-	# d        = wlistr.wfn[:,1:-1]
-	d        = wlistr.get_displacement_fields(interp='linear')[:,1:-1]
-	Y        = np.dstack( [yr,wr] )
+def plot_multipanel(y, yr, d, n0, colors, ylim=None, alpha_x=None, paired=False, dvlabel='Dependent variable', xlabel='Domain position  (%)', group_labels=None, leg_loc=[(0.99, 0.92), (0.99, 0.92), (0.99, 0.99)]):
+	d        = d[:,1:-1]
+	Y        = np.dstack( [yr[:,1:-1],d] )
 	J        = n0
 	fontname = 'Helvetica'
 	glabels  = ['Group 1 mean', 'Group 2 mean'] if (group_labels is None) else group_labels
@@ -104,7 +102,7 @@ def plot_multipanel(y, yr, wr, n0, colors, ylim=None, alpha_x=None, paired=False
 	sz = 16
 	ax0.set_ylabel(dvlabel, name=fontname, size=sz)
 	ax1.set_ylabel(dvlabel, name=fontname, size=sz)
-	ax2.set_ylabel('Warp magnitude (% domain)', name=fontname, size=sz)
+	ax2.set_ylabel('Warp magnitude', name=fontname, size=sz)
 	ax3.set_ylabel('SPM{t}', name=fontname, size=sz)
 	ax4.set_ylabel(r'SPM{ $T^2$ }', name=fontname, size=sz)
 	ax5.set_ylabel('SPM{t}', name=fontname, size=sz)
@@ -113,7 +111,7 @@ def plot_multipanel(y, yr, wr, n0, colors, ylim=None, alpha_x=None, paired=False
 
 	# panel labels:
 	labels = ['A.1', 'B.1', 'B.2', 'A.2', 'B.3', 'B.4', 'B.5']
-	slabels = ['Linearly registered', 'Nonlinearly registered', 'Warp fields', 'Statistical analysis', 'Main test  (amplitude + timing)', 'Post hoc  (amplitude)', 'Post hoc  (timing)']
+	slabels = ['Linearly registered', 'Nonlinearly registered', 'Warp functions', 'Statistical analysis', 'Main test  (amplitude + timing)', 'Post hoc  (amplitude)', 'Post hoc  (timing)']
 	[ax.text(0.03, 0.92, f'({s})  {ss}', name=fontname, size=14, transform=ax.transAxes)   for ax,s,ss in zip( AX, labels, slabels ) ]
 	tx0 = ax1.text(0.01, 1.05, 'Amplitude effects', ha='left', transform=ax1.transAxes)
 	tx1 = ax2.text(0.99, 1.05, 'Timing effects', ha='right', transform=ax2.transAxes)

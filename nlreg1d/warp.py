@@ -10,7 +10,7 @@ class _WarpBase(object):
 	
 	@property
 	def dev(self):  # deviations from linear time (warped grid)
-		return self.w - self.q0
+		return -(self.w - self.q0)
 
 	def _gca(self, ax):
 		return plt.gca() if (ax is None) else ax
@@ -64,7 +64,7 @@ class _WarpBase(object):
 
 class Warp1D(_WarpBase):
 	def __init__(self, w):
-		self.w    = w                          # warp function
+		self.w    = np.asarray(w, dtype=float) # warp function
 		self.q0   = np.linspace(0, 1, self.Q)  # grid points
 
 	@property
@@ -98,7 +98,7 @@ class Warp1D(_WarpBase):
 
 class Warp1DList(list, _WarpBase):
 	def __init__(self, w):
-		self.w    = w
+		self.w    = np.asarray(w, dtype=float)
 		self.q0   = np.linspace(0, 1, self.Q)
 		super().__init__( [Warp1D(ww)  for ww in w] )
 		

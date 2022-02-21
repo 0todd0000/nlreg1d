@@ -1,9 +1,12 @@
 
-import os,pathlib
+import os
 from math import pi
 import numpy as np
 from matplotlib import pyplot as plt
-import nlreg1d
+import nlreg1d as nl
+
+
+save     = True
 
 
 
@@ -14,17 +17,21 @@ y        = np.sin( q * (2*pi) / (Q-1) )
 
 
 # create random warps:
-seeds    = [0, 1, 2]
-sigmas   = [30, 20, 30]
+seeds    = [8, 1, 26]
+sigmas   = [20, 30, 20]
 w        = []
 for sd,sg in zip(seeds,sigmas):
 	np.random.seed(sd)
-	ww   = nlreg1d.warp.random(Q, sg, J=1)
+	ww   = nl.random_warp(J=1, Q=Q, sigma=sg, shape_parameter=100, n_random=1)
 	w.append( ww )
-wf       = [ww.dispf  for ww in w]     # warp (displacement) fields
-yw       = [ww.apply(y)  for ww in w]  # warped data
+wlist    = nl.Warp1DList( w )
+d        = wlist.get_deviation_from_linear_time()  # warp functions
+yw       = [ww.apply(y)  for ww in wlist]          # warped data
 
-
+# wf       = [ww.dispf  for ww in w]     # warp (displacement) fields
+# yw       = [ww.apply(y)  for ww in w]  # warped data
+#
+#
 
 # plot:
 plt.close('all')
@@ -38,11 +45,11 @@ colors   = [ [0.733, 0.576, 0.761],
 
 ### plot warps:
 ax0.plot(q, q, 'k:')
-[ax0.plot( q, 100*ww.asarray(), color=cc)  for ww,cc in zip(w,colors)]
+[ax0.plot( q, 100*ww, color=cc)  for ww,cc in zip(w,colors)]
 
 ### plot displacement fields:
 ax1.axhline(0, color='k', ls=':')
-[ax1.plot( q, 100*wwf, color=cc)  for wwf,cc in zip(wf,colors)]
+[ax1.plot( q, dd, color=cc)  for dd,cc in zip(d,colors)]
 
 ### plot reference data:
 ax2.plot(q, y, 'k', lw=2)
@@ -62,7 +69,8 @@ for ax in AX.ravel():
 
 
 ### limits:
-ax1.set_ylim(-12, 29.5)
+ax0.set_ylim(-5, 109)
+ax1.set_ylim(-0.40, 0.25)
 [ax.set_ylim(-1.3, 1.3)  for ax in AX[1]]
 
 ### ticks:
@@ -72,7 +80,7 @@ ax1.set_ylim(-12, 29.5)
 
 ### axis labels:
 [ax.set_xlabel('Time  (%)', name=fontname, size=12)  for ax in AX.ravel()]
-ylabels = ['Time  (%)  [warped]', 'Temporal shift  (%)', 'Dependent variable value', 'Dependent variable value']
+ylabels = ['Time  (%)  [warped]', 'Warp magnitude  (%)', 'Dependent variable value', 'Dependent variable value']
 [ax.set_ylabel(ss, name=fontname, size=12)  for ax,ss in zip(AX.ravel(), ylabels)]
 
 ### legend:
@@ -80,8 +88,8 @@ leg = ax0.legend(['Null warp', 'Warp 1', 'Warp 2', 'Warp 3'], loc='lower right')
 plt.setp( leg.get_texts(), name=fontname, size=8)
 
 ### panel labels:
-labels = ['Warp functions', 'Warp fields', 'Reference data', 'Warped data']
-[ax.text(0.03, 0.93, '(%s)  %s' %(chr(97+i).upper(), ss), name=fontname, size=12, transform=ax.transAxes)   for i,(ax,ss) in enumerate( zip(AX.ravel(), labels) )   ]
+labels = ['Warp functions\n   (relative to linear time)', 'Warp functions', 'Reference data', 'Warped data']
+[ax.text(0.03, 0.98, '(%s)  %s' %(chr(97+i).upper(), ss), name=fontname, size=12, va='top', transform=ax.transAxes)   for i,(ax,ss) in enumerate( zip(AX.ravel(), labels) )   ]
 
 
 plt.tight_layout()
@@ -89,8 +97,8 @@ plt.tight_layout()
 plt.show()
 
 
-dirFIGS  = os.path.join( pathlib.Path( __file__ ).parent.parent, 'Figures')
-plt.savefig( os.path.join(dirFIGS, 'warp.pdf')  )
+if save:
+	plt.savefig( os.path.join(nl.dirFIGS, 'warp.pdf')  )
 
 
 
