@@ -10,7 +10,7 @@ class _WarpBase(object):
 	
 	@property
 	def dev(self):  # deviations from linear time (warped grid)
-		return -(self.w - self.q0)
+		return self.w - self.q0
 
 	def _gca(self, ax):
 		return plt.gca() if (ax is None) else ax
@@ -86,6 +86,10 @@ class Warp1D(_WarpBase):
 	@property
 	def qw(self):  # warped grid
 		return self.apply( self.q0 )
+
+	@property
+	def size(self):  # number of grid points
+		return self.w.size
 
 	def apply(self, y):  # apply warp to a (Q,) array
 		f     = interpolate.interp1d( self.q0, y, 'linear', bounds_error=False, fill_value=0)

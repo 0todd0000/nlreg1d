@@ -14,7 +14,7 @@ class _Dataset(object):
 	def __init__(self):
 		self.dv    = None   # dependent variable
 		self.group = None   # group
-		self._load_csv()
+		self._load()
 		
 	
 	def __repr__(self):
@@ -24,7 +24,7 @@ class _Dataset(object):
 		s  += f'    groups  = {self.ug.tolist()}\n'
 		return s
 	
-	def _load_csv(self):
+	def _load(self):
 		a          = np.loadtxt( self.fpath, delimiter=',')
 		self.group = np.asarray(a[:,0], dtype=int)
 		self.dv    = a[:,1:]
@@ -71,15 +71,24 @@ class _Dataset(object):
 		ax.set_title( self.name )
 
 
+class Besier2009VastusForce(_Dataset):
+	fpath = os.path.join( dirDATA, 'Besier2009-vastus.csv' )
+	
+class Dorn2012(_Dataset):
+	fpath = os.path.join( dirDATA, 'Dorn2021-reduced.npz' )
+	
+	def _load(self):
+		with np.load( self.fpath, allow_pickle=True ) as z:
+			self.group = z['speed']
+			self.dv    = z['y']
+
+class Pataky2014MediolateralCOP(_Dataset):
+	fpath = os.path.join( dirDATA, 'Pataky2014-mediolateral.csv' )
+
 class SimulatedA(_Dataset):
 	fpath = os.path.join( dirDATA, 'SimulatedA.csv' )
 	
 class SimulatedB(_Dataset):
 	fpath = os.path.join( dirDATA, 'SimulatedB.csv' )
 
-class Besier2009VastusForce(_Dataset):
-	fpath = os.path.join( dirDATA, 'Besier2009-vastus.csv' )
-	
-class Pataky2014MediolateralCOP(_Dataset):
-	fpath = os.path.join( dirDATA, 'Pataky2014-mediolateral.csv' )
 
