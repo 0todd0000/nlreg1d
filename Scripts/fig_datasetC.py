@@ -7,7 +7,7 @@ import nlreg1d as nl
 
 # set parameters:
 niter     = 5
-wdv       = 'deviation'  # dependent variable for warp: 'deviation' or 'displacement'
+wdv       = 'displacement'  # dependent variable for warp: 'deviation' or 'displacement'
 save      = True
 
 
