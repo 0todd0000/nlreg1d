@@ -51,6 +51,17 @@ Activate the environment:
 
 	conda activate nlreg1d
 
+Last, add the parent directory for `nlreg1d` to the Python path. One way to do this is inside a Python script:
+
+	>>> import sys
+	>>> dir0 = '/Users/USERNAME/Downloads/nlreg1d-main'  # adjust this to the location on your computer
+	>>> if dir0 not in sys.path:
+	>>>     sys.path.insert(0, dir0)
+	>>>
+	>>> import nlreg1d
+	
+```
+
 You should now be able to run all scripts / notebooks in IPython / Jupyter.
 
 <br>
