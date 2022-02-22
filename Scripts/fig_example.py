@@ -34,7 +34,7 @@ yi        = np.array( [nl.register_linear(yy, n=101)   for yy in y] )
 # register (nonlinear):
 yr,wf     = nl.register_srsf(yi, MaxItr=niter)
 wlist     = nl.Warp1DList(wf)
-d         = wlist.get_deviation_from_linear_time()
+d         = wlist.get_displacement_field()
 
 
 
@@ -91,7 +91,7 @@ ylabels = ['GRF  (N)'] * 3 + ['Temporal displacement (%)']
 
 
 ### panel labels:
-labels = ['Original', 'Linearly registered', 'Nonlinearly registered', 'Warp functions']
+labels = ['Original', 'Linearly registered', 'Nonlinearly registered', 'Displacement fields']
 [ax.text(0.03, 0.93, '(%s)  %s' %(chr(97+i).upper(), ss), name=fontname, size=12, transform=ax.transAxes)   for i,(ax,ss) in enumerate( zip(AX.ravel(), labels) )]
 
 

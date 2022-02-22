@@ -78,7 +78,7 @@ def plot_multipanel(y, yr, d, n0, colors, ylim=None, alpha_x=None, paired=False,
 	h2 = ax2.axhline(0, color='k', ls='--')
 	h0  = ax2.plot( d[:J].mean(axis=0), color=colors[0], lw=5 )[0]
 	h1  = ax2.plot( d[J:].mean(axis=0), color=colors[1], lw=5 )[0]
-	leg = ax2.legend( [h0,h1,h2], glabels + ['Null warp'], loc='upper right', bbox_to_anchor=leg_loc[2]  )
+	leg = ax2.legend( [h0,h1,h2], glabels + ['Null displacement'], loc='upper right', bbox_to_anchor=leg_loc[2]  )
 	plt.setp( leg.get_texts(), name=fontname)
 
 
@@ -111,7 +111,7 @@ def plot_multipanel(y, yr, d, n0, colors, ylim=None, alpha_x=None, paired=False,
 
 	# panel labels:
 	labels = ['A.1', 'B.1', 'B.2', 'A.2', 'B.3', 'B.4', 'B.5']
-	slabels = ['Linearly registered', 'Nonlinearly registered', 'Warp functions', 'Statistical analysis', 'Main test  (amplitude + timing)', 'Post hoc  (amplitude)', 'Post hoc  (timing)']
+	slabels = ['Linearly registered', 'Nonlinearly registered', 'Displacement fields', 'Statistical analysis', 'Main test  (amplitude + timing)', 'Post hoc  (amplitude)', 'Post hoc  (timing)']
 	[ax.text(0.03, 0.92, f'({s})  {ss}', name=fontname, size=14, transform=ax.transAxes)   for ax,s,ss in zip( AX, labels, slabels ) ]
 	tx0 = ax1.text(0.01, 1.05, 'Amplitude effects', ha='left', transform=ax1.transAxes)
 	tx1 = ax2.text(0.99, 1.05, 'Timing effects', ha='right', transform=ax2.transAxes)

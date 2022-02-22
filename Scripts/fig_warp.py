@@ -18,20 +18,16 @@ y        = np.sin( q * (2*pi) / (Q-1) )
 
 # create random warps:
 seeds    = [8, 1, 26]
-sigmas   = [20, 30, 20]
+sigmas   = [20, 30, 50]
 w        = []
 for sd,sg in zip(seeds,sigmas):
 	np.random.seed(sd)
 	ww   = nl.random_warp(J=1, Q=Q, sigma=sg, shape_parameter=100, n_random=1)
 	w.append( ww )
 wlist    = nl.Warp1DList( w )
-d        = wlist.get_deviation_from_linear_time()  # warp functions
-yw       = [ww.apply(y)  for ww in wlist]          # warped data
+d        = wlist.get_displacement_field()
+yw       = [ww.apply(y)  for ww in wlist]  # warped data
 
-# wf       = [ww.dispf  for ww in w]     # warp (displacement) fields
-# yw       = [ww.apply(y)  for ww in w]  # warped data
-#
-#
 
 # plot:
 plt.close('all')
@@ -70,7 +66,7 @@ for ax in AX.ravel():
 
 ### limits:
 ax0.set_ylim(-5, 109)
-ax1.set_ylim(-0.40, 0.25)
+ax1.set_ylim(-0.40, 0.35)
 [ax.set_ylim(-1.3, 1.3)  for ax in AX[1]]
 
 ### ticks:
@@ -88,7 +84,8 @@ leg = ax0.legend(['Null warp', 'Warp 1', 'Warp 2', 'Warp 3'], loc='lower right')
 plt.setp( leg.get_texts(), name=fontname, size=8)
 
 ### panel labels:
-labels = ['Warp functions\n   (relative to linear time)', 'Warp functions', 'Reference data', 'Warped data']
+# labels = ['Warp functions\n   (relative to linear time)', 'Warp functions', 'Reference data', 'Warped data']
+labels = ['Warp functions', 'Displacement fields', 'Reference data', 'Warped data']
 [ax.text(0.03, 0.98, '(%s)  %s' %(chr(97+i).upper(), ss), name=fontname, size=12, va='top', transform=ax.transAxes)   for i,(ax,ss) in enumerate( zip(AX.ravel(), labels) )   ]
 
 

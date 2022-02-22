@@ -7,8 +7,7 @@ import nlreg1d as nl
 
 # set parameters:
 niter     = 5
-wdv       = 'displacement'  # dependent variable for warp: 'deviation' or 'displacement'
-save      = False
+save      = True
 
 
 
@@ -18,7 +17,7 @@ y         = dataset.dv
 J         = (dataset.group==0).sum()     # number of observations in first group
 yr,wf     = nl.register_srsf(y, MaxItr=niter)
 wlist     = nl.Warp1DList( wf )
-d         = wlist.get_deviation_from_linear_time() if (wdv=='deviation') else wlist.get_displacement_field()
+d         = wlist.get_displacement_field()
 
 
 
@@ -26,9 +25,10 @@ d         = wlist.get_deviation_from_linear_time() if (wdv=='deviation') else wl
 plt.close('all')
 colors    = '0.0', (0.3,0.5,0.99)
 ylimt     = (-7, 7)
-ylim      = [ (-5, 30), (-5, 30), (-0.5, 0.5), ylimt, (-2, 30), ylimt, ylimt ]
+ylim      = [ (-5, 30), (-5, 30), (-0.3, 0.3), ylimt, (-2, 30), ylimt, ylimt ]
 alpha_x   = [70, 70, 70, 70]
-nl.plot.plot_multipanel(y, yr, d, J, colors, ylim, alpha_x, paired=False, dvlabel='Dependent variable value')
+leg_loc   = [(0.99, 0.92), (0.99, 0.92), (0.99, 0.29)]
+nl.plot.plot_multipanel(y, yr, d, J, colors, ylim, alpha_x, paired=False, dvlabel='Dependent variable value', leg_loc=leg_loc)
 plt.show()
 if save:
 	plt.savefig( os.path.join(nl.dirFIGS, f'{dataset.name}.pdf')  )
