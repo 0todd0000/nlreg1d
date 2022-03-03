@@ -30,7 +30,8 @@ def sim(nsim=200, shape_parameter=0.1, n_random=25, u=np.linspace(2, 5, 21)):
     lkce      = []     # estimate LKC
     for i in range(nsim):
         w     = nl.random_warp( J, Q, sigma=3, shape_parameter=shape_parameter, n_random=n_random, as_warp_object=True )
-        y     = w.get_deviation_from_linear_time()[:,1:-1]
+        # y     = w.get_deviation_from_linear_time()[:,1:-1]
+        y     = w.get_displacement_field()[:,1:-1]
         r     = y - y.mean(axis=0)  # residuals
         t     = tstat( y )
         tmax.append( t.max() )
