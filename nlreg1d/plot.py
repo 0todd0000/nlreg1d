@@ -25,7 +25,7 @@ def data2axes(ax, points):
 
 
 
-def plot_multipanel(y, yr, d, n0, colors, ylim=None, alpha_x=None, paired=False, dvlabel='Dependent variable', xlabel='Domain position  (%)', group_labels=None, leg_loc=[(0.99, 0.92), (0.99, 0.92), (0.99, 0.99)]):
+def plot_multipanel(y, yr, d, n0, colors, parametric=True, ylim=None, alpha_x=None, paired=False, permutations=1000, dvlabel='Dependent variable', xlabel='Domain position  (%)', group_labels=None, leg_loc=[(0.99, 0.92), (0.99, 0.92), (0.99, 0.99)]):
 	d        = d[:,1:-1]
 	Y        = np.dstack( [yr[:,1:-1],d] )
 	J        = n0
@@ -33,17 +33,38 @@ def plot_multipanel(y, yr, d, n0, colors, ylim=None, alpha_x=None, paired=False,
 	glabels  = ['Group 1 mean', 'Group 2 mean'] if (group_labels is None) else group_labels
 	
 	# stats:
-	if paired:
-		ti      = spm1d.stats.ttest_paired( y[J:], y[:J] ).inference(0.05)
-		T2i     = spm1d.stats.hotellings_paired( Y[J:], Y[:J] ).inference(0.05)
-		tri     = spm1d.stats.ttest_paired( yr[J:], yr[:J] ).inference(0.05/2)
-		twi     = spm1d.stats.ttest_paired( d[J:], d[:J] ).inference(0.05/2)
+	if parametric:
+		if paired:
+			ti      = spm1d.stats.ttest_paired( y[J:], y[:J] ).inference(0.05)
+			T2i     = spm1d.stats.hotellings_paired( Y[J:], Y[:J] ).inference(0.05)
+			tri     = spm1d.stats.ttest_paired( yr[J:], yr[:J] ).inference(0.05/2)
+			twi     = spm1d.stats.ttest_paired( d[J:], d[:J] ).inference(0.05/2)
+		else:
+			ti      = spm1d.stats.ttest2( y[J:], y[:J] ).inference(0.05)
+			T2i     = spm1d.stats.hotellings2( Y[J:], Y[:J] ).inference(0.05)
+			tri     = spm1d.stats.ttest2( yr[J:], yr[:J] ).inference(0.05/2)
+			twi     = spm1d.stats.ttest2( d[J:], d[:J] ).inference(0.05/2)
 	else:
-		ti      = spm1d.stats.ttest2( y[J:], y[:J] ).inference(0.05)
-		T2i     = spm1d.stats.hotellings2( Y[J:], Y[:J] ).inference(0.05)
-		tri     = spm1d.stats.ttest2( yr[J:], yr[:J] ).inference(0.05/2)
-		twi     = spm1d.stats.ttest2( d[J:], d[:J] ).inference(0.05/2)
-	
+		if paired:
+			t       = spm1d.stats.nonparam.ttest_paired( y[J:], y[:J] )
+			T2      = spm1d.stats.nonparam.hotellings_paired( Y[J:], Y[:J] )
+			tr      = spm1d.stats.nonparam.ttest_paired( yr[J:], yr[:J] )
+			tw      = spm1d.stats.nonparam.ttest_paired( d[J:], d[:J] )
+		else:
+			t       = spm1d.stats.nonparam.ttest2( y[J:], y[:J] )
+			T2      = spm1d.stats.nonparam.hotellings2( Y[J:], Y[:J] )
+			tr      = spm1d.stats.nonparam.ttest2( yr[J:], yr[:J] )
+			tw      = spm1d.stats.nonparam.ttest2( d[J:], d[:J] )
+		nperm       = -1 if (permutations > t.nPermUnique) else permutations
+		ti          = t.inference(0.05, iterations=nperm,  two_tailed=True)
+		T2i         = T2.inference(0.05, iterations=nperm)
+		tri         = tr.inference(0.05, iterations=nperm, two_tailed=True)
+		twi         = tw.inference(0.05, iterations=nperm, two_tailed=True)
+		# nperm0      = -1 if (permutations > t.nPermUnique) else permutations
+		# nperm1      = -1 if (permutations > T2.nPermUnique) else permutations
+		# nperm2      = -1 if (permutations > tr.nPermUnique) else permutations
+		# nperm3      = -1 if (permutations > tw.nPermUnique) else permutations
+		
 	
 	# create figure and axes:
 	fig         = plt.figure(  figsize=(14,10)  )

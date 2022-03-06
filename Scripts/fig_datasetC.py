@@ -6,8 +6,11 @@ import nlreg1d as nl
 
 
 # set parameters:
-niter     = 5
-save      = True
+np.random.seed(123456789)
+niter      = 5      # max iterations for SRSF registration
+save       = True   # save figure as PDF?
+parametric = False  # parametric or nonparametric inference
+nperm      = 1000   # number of permutations for SnPM ("Fmax") inference
 
 
 
@@ -28,7 +31,7 @@ xlabel    = 'Time  (% stance)'
 ylim      = [ (-0.05, 1.3), (-0.05, 1.3), (-0.5, 0.5), (-6, 6), (-2, 30), (-6,6), (-6,6) ]
 alpha_x   = [70, 70, 70, 70]
 leg_loc   = [(0.80, 0.92), (0.80, 0.92), (0.99, 0.29)]
-nl.plot.plot_multipanel(y, yr, d, J, colors, ylim, alpha_x, paired=False, dvlabel='Muscle force  (kN)', group_labels=['Control mean', 'PFP mean'], xlabel=xlabel, leg_loc=leg_loc)
+nl.plot.plot_multipanel(y, yr, d, J, colors, parametric, ylim, alpha_x, paired=False, permutations=nperm, dvlabel='Muscle force  (kN)', group_labels=['Control mean', 'PFP mean'], xlabel=xlabel, leg_loc=leg_loc)
 plt.show()
 if save:
 	plt.savefig( os.path.join(nl.dirFIGS, f'{dataset.name}.pdf')  )

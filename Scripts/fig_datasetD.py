@@ -6,8 +6,11 @@ import nlreg1d as nl
 
 
 # set parameters:
-niter     = 5
-save      = True
+np.random.seed(123456789)
+niter      = 5      # max iterations for SRSF registration
+save       = True   # save figure as PDF?
+parametric = False  # parametric or nonparametric inference
+nperm      = 1000   # number of permutations for SnPM ("Fmax") inference
 
 
 
@@ -29,7 +32,7 @@ ylimt     = (-7.5, 7.5)
 ylim      = [ (-2, 3), (-2, 3), (-0.5, 0.5), ylimt, (-2, 90), ylimt, ylimt ]
 alpha_x   = [20, 20, 80, 80]
 leg_loc   = [(0.80, 0.29), (0.80, 0.29), (0.50, 0.29)]
-fig,AX    = nl.plot.plot_multipanel(y, yr, d, J, colors, ylim, alpha_x, paired=True, dvlabel='Mediolateral COP  (cm)', group_labels=['Normal', 'Fast'], xlabel=xlabel, leg_loc=leg_loc)
+fig,AX    = nl.plot.plot_multipanel(y, yr, d, J, colors, parametric, ylim, alpha_x, paired=True, permutations=nperm, dvlabel='Mediolateral COP  (cm)', group_labels=['Normal', 'Fast'], xlabel=xlabel, leg_loc=leg_loc)
 tx0,tx1   = AX[0].text(0.1, 0.8, 'Lateral'), AX[0].text(0.1, 0.1, 'Medial')
 plt.setp( [tx0,tx1], name='Helvetica', size=10, bbox=dict(facecolor='0.9'), transform=AX[0].transAxes)
 [ax.axhline(0, color='k', ls=':')  for ax in AX[:2]]
