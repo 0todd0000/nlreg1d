@@ -32,7 +32,10 @@ for ds in dss:
 plt.close('all')
 fig,axs = plt.subplots( 2, 2, figsize=(8,6) )
 for ax,ds,df,x in zip(axs.ravel(), dss, dfr, lkc):
-	ax.plot(df.T, 'k-')
+	ax.plot(df.T, 'k-', lw=0.5)
 	ax.text(0.05, 0.92, '%s: LKC=%.3f' %(ds.name, x), transform=ax.transAxes)
+	ax.set_ylim(-0.4, 0.4)
 plt.tight_layout()
 plt.show()
+
+
