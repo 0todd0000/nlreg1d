@@ -6,13 +6,11 @@ Nonlinear registration for univariate one-dimensional data.
 
 This repository contains code and data associated with the paper:
 
-Pataky TC, Robinson MA, Vanrenterghem J, Donnelly CJ (in review) Simultaneously assessing amplitude and temporal effects in biomechanical trajectories using nonlinear registration and statistical parametric mapping. Journal of Biomechanics.
+Pataky TC, Robinson MA, Vanrenterghem J, Donnelly CJ (2022) Simultaneously assessing amplitude and temporal effects in biomechanical trajectories using nonlinear registration and statistical nonparametric mapping. Journal of Biomechanics 136: 111049.
 
 <br>
 
-⚠️ This study is under review, and its methods have been challenged during peer review. **DO NOT USE THIS REPOSITORY** until it passes peer review.
-
-⚠️ This repository contains primarily wrapper functions to key functionality in [fdasrsf](https://github.com/jdtuck/fdasrsf_python) and [scikit-fda](https://fda.readthedocs.io/en/latest/) and [spm1d](https://spm1d.org); little-to-no new functionality is introduced. The primary purpose of this repository is not to introduce new functionality, but instead to describe existing, relatively complex functionality in an easy-to-grasp manner. Users are encouraged to use the original packages:  `fdasrsf`, `scikit-fda` and `spm1d`.
+⚠️ This repository contains primarily wrapper functions to key functionality in [fdasrsf](https://github.com/jdtuck/fdasrsf_python) and [scikit-fda](https://fda.readthedocs.io/en/latest/) and [spm1d](https://spm1d.org); little-to-no new functionality is introduced. The primary purpose of this repository is not to introduce new functionality, but instead to assemble existing, relatively complex functionality into an easy-to-use interface. Users are encouraged to use the original packages:  `fdasrsf`, `scikit-fda` and `spm1d`.
 
 <br>
 
